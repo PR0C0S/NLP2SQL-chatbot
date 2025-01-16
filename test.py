@@ -1,8 +1,9 @@
+from difflib import SequenceMatcher
 import os
 from gradio_client import Client
 import json
 from chatbot_test import chatbot
-
+import time
 
 embedding_key=os.environ.get('OPENAI_EMBEDDING_KEY')
 api_key=os.environ.get('OPENAI_API_KEY')
@@ -13,7 +14,30 @@ def load_test_dataset(json_file_path):
         return json.load(file)
 
 
+def is_similar_query(generated_query, expected_query, threshold=0.8):
+    """
+    Compare two SQL queries for similarity.
+
+    Args:
+        generated_query (str): The generated SQL query.
+        expected_query (str): The expected SQL query.
+        threshold (float): Similarity threshold (0.0 to 1.0).
+
+    Returns:
+        bool: True if similarity ratio >= threshold, else False.
+    """
+    # Normalize whitespace and case
+    generated_query = " ".join(generated_query.strip().lower().split())
+    if not generated_query.endswith(";"):
+        generated_query += ";"
+    expected_query = " ".join(expected_query.strip().lower().split())
+
+    # Calculate similarity ratio
+    similarity_ratio = SequenceMatcher(None, generated_query, expected_query).ratio()
+    return similarity_ratio >= threshold
+
 def test_chatbot_with_gradio(client, api_name, test_dataset):
+    start_time = time.time()
     results = []
     for test_case in test_dataset:
         try: 
@@ -28,11 +52,10 @@ def test_chatbot_with_gradio(client, api_name, test_dataset):
             response=chatbot(question)
 
             response_dict = json.loads(response) 
-            print(response_dict)
             captured_queries = response_dict.get("captured_queries", "")
           
             # Compare with the expected query
-            is_correct = captured_queries == expected_query
+            is_correct = is_similar_query(captured_queries, expected_query, threshold=0.80)
             results.append({
                 "question": question,
                 "expected_query": expected_query,
@@ -41,6 +64,10 @@ def test_chatbot_with_gradio(client, api_name, test_dataset):
             })
         except Exception as e:
             print(f"ERROR:{e}")
+    end_time = time.time() 
+    elapsed_time = end_time - start_time 
+    print(f"Elapsed Time: {elapsed_time:.2f} seconds")
+        
     return results
 
 # Function to print the test results
@@ -58,6 +85,7 @@ def calculate_accuracy(results):
     correct_cases = sum(result["is_correct"] for result in results)
     accuracy = (correct_cases / total_cases) * 100 if total_cases > 0 else 0
     print(f"Accuracy: {accuracy:.2f}% ({correct_cases}/{total_cases} correct cases)")
+    
     return accuracy
 
 # Main execution

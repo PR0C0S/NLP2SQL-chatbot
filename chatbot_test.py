@@ -8,10 +8,17 @@ from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.utilities import SQLDatabase
 from langchain.chains.base import Chain
 from langchain.callbacks.base import BaseCallbackHandler
-
+from langchain_community.tools.sql_database.tool import (
+    InfoSQLDatabaseTool,
+    ListSQLDatabaseTool,
+    QuerySQLCheckerTool,
+    QuerySQLDataBaseTool,
+)
 api_key=os.environ.get('OPENAI_API_KEY')
 
-
+class EarlyStoppingException(Exception):
+    """Custom exception to stop the chain early."""
+    pass
 
 template = '''Given an input question, first create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer.
             Use the following format:
@@ -62,9 +69,10 @@ class QueryCaptureCallback(BaseCallbackHandler):
 
     def on_agent_action(self, action, *, run_id, parent_run_id = None, **kwargs):
         if action.tool == "sql_db_query_checker":
-            print(f"Tool Invoked: {action.tool}, Input: {action.tool_input}")  # Debugging
+            # print(f"Tool Invoked: {action.tool}, Input: {action.tool_input}")  # Debugging
             self.queries = action.tool_input['query']
             self.stop_execution  = True
+            raise EarlyStoppingException
 
 def chatbot(query_text):
     """Handles chatbot queries."""
@@ -94,7 +102,13 @@ def chatbot(query_text):
             "captured_queries": cleaned_query,
         }
         return json.dumps(response)
-        
+    except EarlyStoppingException:
+        # Handle early stopping and return the captured query
+        captured_query = callback_handler.captured_query or "No query captured"
+        return json.dumps({
+            "output": "",
+            "captured_queries": captured_query
+        })    
     except Exception as e:
         captured_queries = callback_handler.queries
         cleaned_query = captured_queries.replace('\n', ' ').strip()
