@@ -63,15 +63,13 @@ prompt = PromptTemplate.from_template(template)
 
 class QueryCaptureCallback(BaseCallbackHandler):
     def __init__(self):
-        self.queries = ""
-        self.stop_execution  = False
-        
+        self.captured_query = ""  # Properly define the attribute
+        self.stop_execution = False
 
-    def on_agent_action(self, action, *, run_id, parent_run_id = None, **kwargs):
+    def on_agent_action(self, action, *, run_id, parent_run_id=None, **kwargs):
         if action.tool == "sql_db_query_checker":
-            # print(f"Tool Invoked: {action.tool}, Input: {action.tool_input}")  # Debugging
-            self.queries = action.tool_input['query']
-            self.stop_execution  = True
+            self.captured_query = action.tool_input.get("query", "")  # Capture the query
+            self.stop_execution = True
             raise EarlyStoppingException
 
 def chatbot(query_text):

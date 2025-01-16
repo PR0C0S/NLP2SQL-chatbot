@@ -86,7 +86,7 @@ def run_tests(json_file, session, engine):
                 store_in_chroma(test['question'], result)
 
                 # Generate SQL using the chatbot_test function and capture the raw result (including query)
-                generated_response = chatbot_test(f"Question: {question}\nExpected SQL: {expected_answer}")
+                generated_response = chatbot_test(f"Question: {question}")
 
                 # Extract the SQL query from the generated response
                 generated_sql = json.loads(generated_response).get("captured_query")
