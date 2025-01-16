@@ -1,0 +1,123 @@
+[
+    {
+      "question": "What are the unique customer IDs for customers in the city of 'sao paulo'?",
+      "query": "SELECT customer_unique_id FROM customers WHERE customer_city = 'sao paulo' LIMIT 5;"
+    },
+    {
+      "question": "How many customers are from the state 'SP'?",
+      "query": "SELECT COUNT(*) AS total_customers FROM customers WHERE customer_state = 'SP';"
+    },
+    {
+      "question": "What are the customer IDs and cities of customers with a zip code prefix of 6273?",
+      "query": "SELECT customer_id, customer_city FROM customers WHERE customer_zip_code_prefix = 6273 LIMIT 5;"
+    },
+    {
+      "question": "List customer IDs and their states for all customers.",
+      "query": "SELECT customer_id, customer_state FROM customers LIMIT 5;"
+    },
+    {
+      "question": "What is the distribution of customers by state?",
+      "query": "SELECT customer_state, COUNT(*) AS total FROM customers GROUP BY customer_state LIMIT 5;"
+    },
+    {
+      "question": "What are the latitude and longitude of geolocations in the state 'SP'?",
+      "query": "SELECT geolocation_lat, geolocation_lng FROM geolocations WHERE geolocation_state = 'SP' LIMIT 5;"
+    },
+    {
+      "question": "Find geolocation cities with a zip code prefix of 1046.",
+      "query": "SELECT geolocation_city FROM geolocations WHERE geolocation_zip_code_prefix = 1046 LIMIT 5;"
+    },
+    {
+      "question": "What are the distinct states represented in the geolocations table?",
+      "query": "SELECT DISTINCT geolocation_state FROM geolocations LIMIT 5;"
+    },
+    {
+      "question": "List all geolocations with latitude greater than -23.5.",
+      "query": "SELECT geolocation_zip_code_prefix, geolocation_lat FROM geolocations WHERE geolocation_lat > -23.5 LIMIT 5;"
+    },
+    {
+      "question": "How many geolocations exist for the city 'sao paulo'?",
+      "query": "SELECT COUNT(*) AS total_geolocations FROM geolocations WHERE geolocation_city = 'sao paulo';"
+    },
+    {
+      "question": "What are the order IDs and product IDs for the top 5 order items?",
+      "query": "SELECT order_id, product_id FROM order_items LIMIT 5;"
+    },
+    {
+      "question": "How much is the total price of items in order '00010242fe8c5a6d1ba2dd792cb16214'?",
+      "query": "SELECT SUM(price) AS total_price FROM order_items WHERE order_id = '00010242fe8c5a6d1ba2dd792cb16214';"
+    },
+    {
+      "question": "What are the shipping limit dates for items sold by seller '48436dade18ac8b2bce089ec2a041202'?",
+      "query": "SELECT shipping_limit_date FROM order_items WHERE seller_id = '48436dade18ac8b2bce089ec2a041202' LIMIT 5;"
+    },
+    {
+      "question": "List the order items with a freight value greater than 15.",
+      "query": "SELECT order_id, order_item_id, freight_value FROM order_items WHERE freight_value > 15 LIMIT 5;"
+    },
+    {
+      "question": "Count the number of items sold by each seller.",
+      "query": "SELECT seller_id, COUNT(*) AS item_count FROM order_items GROUP BY seller_id LIMIT 5;"
+    },
+    {
+      "question": "What are the order IDs and status for delivered orders?",
+      "query": "SELECT order_id, order_status FROM orders WHERE order_status = 'delivered' LIMIT 5;"
+    },
+    {
+      "question": "How many orders were placed on a specific date '2017-09-13'?",
+      "query": "SELECT COUNT(*) AS total_orders FROM orders WHERE DATE(order_purchase_timestamp) = '2017-09-13';"
+    },
+    {
+      "question": "List the order IDs with estimated delivery dates before '2017-10-01'.",
+      "query": "SELECT order_id FROM orders WHERE order_estimated_delivery_date < '2017-10-01' LIMIT 5;"
+    },
+    {
+      "question": "What is the average delivery time for all orders?",
+      "query": "SELECT AVG(DATEDIFF(order_delivered_customer_date, order_purchase_timestamp)) AS avg_delivery_time FROM orders;"
+    },
+    {
+      "question": "Count the number of orders by status.",
+      "query": "SELECT order_status, COUNT(*) AS total FROM orders GROUP BY order_status LIMIT 5;"
+    },
+    {
+      "question": "What are the payment types used for orders with value greater than 200?",
+      "query": "SELECT DISTINCT payment_type FROM payments WHERE payment_value > 200 LIMIT 5;"
+    },
+    {
+      "question": "How many installments are used for payments in a specific order '00010242fe8c5a6d1ba2dd792cb16214'?",
+      "query": "SELECT payment_installments FROM payments WHERE order_id = '00010242fe8c5a6d1ba2dd792cb16214';"
+    },
+    {
+      "question": "List the payment values for all orders.",
+      "query": "SELECT order_id, payment_value FROM payments LIMIT 5;"
+    },
+    {
+      "question": "What is the total payment value for each order?",
+      "query": "SELECT order_id, SUM(payment_value) AS total_payment FROM payments GROUP BY order_id LIMIT 5;"
+    },
+    {
+      "question": "How many payments were made using credit cards?",
+      "query": "SELECT COUNT(*) AS total_credit_card_payments FROM payments WHERE payment_type = 'credit_card';"
+    },
+    {
+      "question": "Retrieve a list of orders along with customer city and payment value.",
+      "query": "SELECT o.order_id, c.customer_city, p.payment_value FROM orders o JOIN customers c ON o.customer_id = c.customer_id JOIN payments p ON o.order_id = p.order_id LIMIT 5;"
+    },
+    {
+      "question": "Get the total sales value for each seller, including the seller's city and state.",
+      "query": "SELECT s.seller_id, s.seller_city, s.seller_state, SUM(oi.price) AS total_sales FROM sellers s JOIN order_items oi ON s.seller_id = oi.seller_id GROUP BY s.seller_id LIMIT 5;"
+    },
+    {
+      "question": "List all products sold in orders that were delivered along with their respective reviews.",
+      "query": "SELECT p.product_id, r.review_score FROM products p JOIN order_items oi ON p.product_id = oi.product_id JOIN orders o ON oi.order_id = o.order_id JOIN reviews r ON o.order_id = r.order_id WHERE o.order_status = 'delivered' LIMIT 5;"
+    },
+    {
+      "question": "Find the average payment value per customer who has made at least one order.",
+      "query": "SELECT c.customer_id, AVG(p.payment_value) AS avg_payment FROM customers c JOIN orders o ON c.customer_id = o.customer_id JOIN payments p ON o.order_id = p.order_id GROUP BY c.customer_id LIMIT 5;"
+    },
+    {
+      "question": "What are the details of orders, including customer city, product, and payment type?",
+      "query": "SELECT o.order_id, c.customer_city, pr.product_id, p.payment_type FROM orders o JOIN customers c ON o.customer_id = c.customer_id JOIN order_items oi ON o.order_id = oi.order_id JOIN products pr ON oi.product_id = pr.product_id JOIN payments p ON o.order_id = p.order_id LIMIT 5;"
+    }
+  ]
+  

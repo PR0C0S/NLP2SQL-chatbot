@@ -1,0 +1,10 @@
+[
+    {
+        "question": "What are the latitude and longitude of geolocations in the state 'SP'?",
+        "query": "SELECT geolocation_lat, geolocation_lng FROM geolocations WHERE geolocation_state = 'SP' LIMIT 5;"
+      },
+      {
+        "question": "Find geolocation cities with a zip code prefix of 1046.",
+        "query": "SELECT geolocation_city FROM geolocations WHERE geolocation_zip_code_prefix = 1046 LIMIT 5;"
+      }
+    ]
