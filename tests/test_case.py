@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 import chromadb
 import time
-from chatbot import chatbot_test
+from chatbot_test import chatbot_test
 from sklearn.metrics.pairwise import cosine_similarity
 import json
 
