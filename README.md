@@ -81,7 +81,6 @@ The test dataset is stored in a JSON file (`test.json`) with the following struc
 ## Execution Steps
 
 1. **Setup**:
-   - Ensure the chatbot and Gradio app are running.
    - Export the required API keys:
      ```bash
      export OPENAI_API_KEY=<your_openai_api_key>
