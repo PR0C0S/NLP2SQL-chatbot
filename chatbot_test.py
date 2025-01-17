@@ -63,15 +63,13 @@ prompt = PromptTemplate.from_template(template)
 
 class QueryCaptureCallback(BaseCallbackHandler):
     def __init__(self):
-        self.queries = ""
-        self.stop_execution  = False
-        
+        self.captured_query = ""  # Properly define the attribute
+        self.stop_execution = False
 
-    def on_agent_action(self, action, *, run_id, parent_run_id = None, **kwargs):
+    def on_agent_action(self, action, *, run_id, parent_run_id=None, **kwargs):
         if action.tool == "sql_db_query_checker":
-            # print(f"Tool Invoked: {action.tool}, Input: {action.tool_input}")  # Debugging
-            self.queries = action.tool_input['query']
-            self.stop_execution  = True
+            self.captured_query = action.tool_input.get("query", "")  # Capture the query
+            self.stop_execution = True
             raise EarlyStoppingException
 
 def chatbot(query_text):
@@ -117,3 +115,53 @@ def chatbot(query_text):
             "captured_queries": cleaned_query,
         }
         return json.dumps(response)
+
+def chatbot_test(query_text):
+    """Handles chatbot queries and returns the generated SQL query."""
+    try:
+        # Step 1: Initialize database and LLM
+        db = get_database()
+        if not isinstance(db, SQLDatabase):
+            raise ValueError("Database connection must be of type SQLDatabase.")
+        
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key=api_key, temperature=0)
+        
+        # Initialize the callback handler to capture the query
+        callback_handler = QueryCaptureCallback()
+
+        # Step 2: Create the SQL agent with the callback
+        sql_chain = create_sql_agent(
+            llm,
+            db=db,
+            agent_type="openai-tools",
+            verbose=False,
+            top_k=5,
+            agent_executor_kwargs={"callbacks": [callback_handler]},
+        )
+
+        # Step 3: Invoke the chain
+        response = sql_chain.invoke({"input": query_text})
+
+        # Step 4: Get the captured query
+        captured_query = callback_handler.captured_query or "No query captured"
+        
+        # Clean up the query
+        cleaned_query = captured_query.replace('\n', ' ').strip()
+
+        return json.dumps({
+            "captured_query": cleaned_query,
+            "output": response.get("output", "")
+        })
+        
+    except EarlyStoppingException:
+        # Handle early stopping and return the captured query
+        captured_query = callback_handler.captured_query or "No query captured"
+        return json.dumps({
+            "captured_query": captured_query,
+            "output": ""
+        })
+        
+    except Exception as e:
+        return json.dumps({
+            "error": f"An error occurred: {str(e)}"
+        })

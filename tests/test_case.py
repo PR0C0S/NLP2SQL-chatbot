@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 import chromadb
 import time
-from chatbot import chatbot_test
+from chatbot_test import chatbot_test
 from sklearn.metrics.pairwise import cosine_similarity
 import json
 
@@ -86,7 +86,7 @@ def run_tests(json_file, session, engine):
                 store_in_chroma(test['question'], result)
 
                 # Generate SQL using the chatbot_test function and capture the raw result (including query)
-                generated_response = chatbot_test(f"Question: {question}\nExpected SQL: {expected_answer}")
+                generated_response = chatbot_test(f"Question: {question}")
 
                 # Extract the SQL query from the generated response
                 generated_sql = json.loads(generated_response).get("captured_query")
