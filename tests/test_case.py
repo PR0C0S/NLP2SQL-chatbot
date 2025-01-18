@@ -9,6 +9,7 @@ import time
 from chatbot_test import chatbot_test
 from sklearn.metrics.pairwise import cosine_similarity
 import json
+import time
 
 
 # Configuration
@@ -66,16 +67,18 @@ def calculate_similarity(expected_result, generated_result):
 
 def run_tests(json_file, session, engine):
     similarity_scores = []  # List to store similarity scores for each test
+    start_time = time.time()
 
     with open(json_file, 'r') as f:
         test_cases = json.load(f)
+    
+    iter_count=1
 
     for test in test_cases:
         question = test['question']
         expected_answer = test['expected_answer']
-        print(f"\nQuestion: {question}")
+        print(f"\nQuestion {iter_count}: {question}")
         print(f"Expected SQL: {expected_answer}")
-
         try:
             # Execute the expected SQL query and fetch the result
             with engine.connect() as conn:
@@ -108,6 +111,11 @@ def run_tests(json_file, session, engine):
 
         except Exception as e:
             print(f"❌ Test failed. Query execution error: {e}")
+        
+        end_one_time = time.time()
+        time_taken = end_one_time - start_time
+        print(f"\nTotal Time Taken for test {iter_count}: {time_taken:.2f} seconds")
+        iter_count+=1
 
     # Calculate and print the grand global score (average similarity score)
     if similarity_scores:
@@ -115,6 +123,9 @@ def run_tests(json_file, session, engine):
         print(f"\nGrand Global Score (Average Similarity): {grand_global_score:.2f}")
     else:
         print("\nNo similarity scores to calculate.")
+    end_time = time.time()
+    total_time_taken = end_time - start_time
+    print(f"\nTotal Time Taken for run_tests: {total_time_taken:.2f} seconds")
 
 def main():
     # Connect to the database
