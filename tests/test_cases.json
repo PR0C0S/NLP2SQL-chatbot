@@ -1,5 +1,105 @@
 [
     {
+        "question": "Who is the top customer by total amount spent?",
+        "expected_answer": "SELECT o.customer_id, SUM(p.payment_value) AS total_spent FROM ecommerce.orders o JOIN ecommerce.payments p ON o.order_id = p.order_id GROUP BY o.customer_id ORDER BY total_spent DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product has the highest average rating?",
+        "expected_answer": "SELECT oi.product_id, AVG(r.review_score) AS average_rating FROM ecommerce.order_items oi LEFT JOIN ecommerce.reviews r ON oi.order_id = r.order_id GROUP BY oi.product_id ORDER BY average_rating DESC LIMIT 1;"
+    },
+    {
+        "question": "Which city has the highest number of orders?",
+        "expected_answer": "SELECT c.customer_city, COUNT(o.order_id) AS order_count FROM ecommerce.customers c JOIN ecommerce.orders o ON c.customer_id = o.customer_id GROUP BY c.customer_city ORDER BY order_count DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product generated the highest revenue?",
+        "expected_answer": "SELECT oi.product_id, SUM(oi.price) AS total_revenue FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id GROUP BY oi.product_id ORDER BY total_revenue DESC LIMIT 1;"
+    },
+    {
+        "question": "What is the average delivery time for delivered orders?",
+        "expected_answer": "SELECT AVG(TIMESTAMPDIFF(DAY, o.order_purchase_timestamp, o.order_delivered_customer_date)) AS avg_delivery_time FROM ecommerce.orders o WHERE o.order_delivered_customer_date IS NOT NULL;"
+    },
+    {
+        "question": "Which seller has the highest average order price?",
+        "expected_answer": "SELECT oi.seller_id, AVG(oi.price) AS avg_order_price FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id GROUP BY oi.seller_id ORDER BY avg_order_price DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product category has the highest total revenue?",
+        "expected_answer": "SELECT pc.product_category_name, SUM(oi.price) AS total_revenue FROM ecommerce.product_categories pc JOIN ecommerce.products p ON pc.product_category_name = p.product_category_name JOIN ecommerce.order_items oi ON p.product_id = oi.product_id GROUP BY pc.product_category_name ORDER BY total_revenue DESC LIMIT 1;"
+    },
+    {
+        "question": "Which customer has the most canceled orders in the last 6 months?",
+        "expected_answer": "SELECT o.customer_id, COUNT(o.order_id) AS canceled_orders FROM ecommerce.orders o WHERE o.order_status = 'canceled' AND o.order_purchase_timestamp > NOW() - INTERVAL 6 MONTH GROUP BY o.customer_id ORDER BY canceled_orders DESC LIMIT 1;"
+    },
+    {
+        "question": "Which state has the highest average freight cost?",
+        "expected_answer": "SELECT c.customer_state, AVG(oi.freight_value) AS avg_freight_value FROM ecommerce.orders o JOIN ecommerce.order_items oi ON o.order_id = oi.order_id JOIN ecommerce.customers c ON o.customer_id = c.customer_id GROUP BY c.customer_state ORDER BY avg_freight_value DESC LIMIT 1;"
+    },
+    {
+        "question": "Which seller has the most late deliveries?",
+        "expected_answer": "SELECT oi.seller_id, COUNT(o.order_id) AS late_deliveries FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id WHERE o.order_delivered_customer_date > o.order_estimated_delivery_date GROUP BY oi.seller_id ORDER BY late_deliveries DESC LIMIT 1;"
+    },
+    {
+        "question": "What percentage of orders are delivered late for a specific seller?",
+        "expected_answer": "SELECT oi.seller_id, (COUNT(CASE WHEN o.order_delivered_customer_date > o.order_estimated_delivery_date THEN 1 END) / COUNT(o.order_id)) * 100 AS late_delivery_percentage FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id GROUP BY oi.seller_id ORDER BY late_delivery_percentage DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product category has the highest average price?",
+        "expected_answer": "SELECT pc.product_category_name, AVG(oi.price) AS avg_price FROM ecommerce.product_categories pc JOIN ecommerce.products p ON pc.product_category_name = p.product_category_name JOIN ecommerce.order_items oi ON p.product_id = oi.product_id GROUP BY pc.product_category_name ORDER BY avg_price DESC LIMIT 1;"
+    },
+    {
+        "question": "Which customer has ordered products from the most categories?",
+        "expected_answer": "SELECT o.customer_id, COUNT(DISTINCT p.product_category_name) AS category_count FROM ecommerce.orders o JOIN ecommerce.order_items oi ON o.order_id = oi.order_id JOIN ecommerce.products p ON oi.product_id = p.product_id GROUP BY o.customer_id ORDER BY category_count DESC LIMIT 1;"
+    },
+    {
+        "question": "Which zip code region has the highest number of customers?",
+        "expected_answer": "SELECT customer_zip_code_prefix, COUNT(customer_id) AS customer_count FROM ecommerce.customers GROUP BY customer_zip_code_prefix ORDER BY customer_count DESC LIMIT 1;"
+    },
+    {
+        "question": "Which seller generated the highest revenue in the last year?",
+        "expected_answer": "SELECT oi.seller_id, SUM(oi.price) AS total_revenue FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id WHERE o.order_purchase_timestamp > NOW() - INTERVAL 1 YEAR GROUP BY oi.seller_id ORDER BY total_revenue DESC LIMIT 1;"
+    },
+    {
+        "question": "Which state has the highest average payment value?",
+        "expected_answer": "SELECT c.customer_state, AVG(p.payment_value) AS avg_payment_value FROM ecommerce.orders o JOIN ecommerce.payments p ON o.order_id = p.order_id JOIN ecommerce.customers c ON o.customer_id = c.customer_id GROUP BY c.customer_state ORDER BY avg_payment_value DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product has been ordered the most in the last month?",
+        "expected_answer": "SELECT oi.product_id, COUNT(oi.order_id) AS total_ordered FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id WHERE o.order_purchase_timestamp > NOW() - INTERVAL 1 MONTH GROUP BY oi.product_id ORDER BY total_ordered DESC LIMIT 1;"
+    },
+    {
+        "question": "Which seller has the highest average shipping cost?",
+        "expected_answer": "SELECT oi.seller_id, AVG(oi.freight_value) AS avg_shipping_cost FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id GROUP BY oi.seller_id ORDER BY avg_shipping_cost DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product has the highest number of reviews?",
+        "expected_answer": "SELECT oi.product_id, COUNT(r.review_id) AS review_count FROM ecommerce.order_items oi JOIN ecommerce.reviews r ON oi.order_id = r.order_id GROUP BY oi.product_id ORDER BY review_count DESC LIMIT 1;"
+    },
+    {
+        "question": "Which seller has the most product categories represented in their sales?",
+        "expected_answer": "SELECT oi.seller_id, COUNT(DISTINCT p.product_category_name) AS category_count FROM ecommerce.order_items oi JOIN ecommerce.products p ON oi.product_id = p.product_id GROUP BY oi.seller_id ORDER BY category_count DESC LIMIT 1;"
+    },
+    {
+        "question": "Which customer made the most recent purchase?",
+        "expected_answer": "SELECT o.customer_id, MAX(o.order_purchase_timestamp) AS most_recent_purchase FROM ecommerce.orders o GROUP BY o.customer_id ORDER BY most_recent_purchase DESC LIMIT 1;"
+    },
+    {
+        "question": "Which product category has the lowest average price?",
+        "expected_answer": "SELECT pc.product_category_name, AVG(oi.price) AS avg_price FROM ecommerce.product_categories pc JOIN ecommerce.products p ON pc.product_category_name = p.product_category_name JOIN ecommerce.order_items oi ON p.product_id = oi.product_id GROUP BY pc.product_category_name ORDER BY avg_price ASC LIMIT 1;"
+    },
+    {
+        "question": "Which seller's orders have the most delayed deliveries?",
+        "expected_answer": "SELECT oi.seller_id, COUNT(o.order_id) AS delayed_deliveries FROM ecommerce.order_items oi JOIN ecommerce.orders o ON oi.order_id = o.order_id WHERE o.order_delivered_customer_date > o.order_estimated_delivery_date GROUP BY oi.seller_id ORDER BY delayed_deliveries DESC LIMIT 1;"
+    },
+    {
+        "question": "Which customer has placed the most orders in the past 3 months?",
+        "expected_answer": "SELECT o.customer_id, COUNT(o.order_id) AS order_count FROM ecommerce.orders o WHERE o.order_purchase_timestamp > NOW() - INTERVAL 3 MONTH GROUP BY o.customer_id ORDER BY order_count DESC LIMIT 1;"
+    },
+    {
+        "question": "Which seller has the most reviews on their products?",
+        "expected_answer": "SELECT oi.seller_id, COUNT(r.review_id) AS review_count FROM ecommerce.order_items oi JOIN ecommerce.reviews r ON oi.order_id = r.order_id GROUP BY oi.seller_id ORDER BY review_count DESC LIMIT 1;"
+    }
+    ,{
         "question": "What is the most sold product?",
         "expected_answer": "SELECT oi.product_id, COUNT(*) as total_sales FROM order_items oi GROUP BY oi.product_id ORDER BY total_sales DESC LIMIT 1;"
     },
