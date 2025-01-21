@@ -91,9 +91,9 @@ def chatbot(query_text):
         )
         response = sql_chain.invoke({"input": query_text})
        
-        captured_queries = callback_handler.queries
+        captured_queries = callback_handler.captured_query
 
-        cleaned_query = captured_queries.replace('\n', ' ').strip()
+        cleaned_query = captured_queries.captured_query('\n', ' ').strip()
         
         response={
             "output": response["output"],  # Agent's response
@@ -108,7 +108,7 @@ def chatbot(query_text):
             "captured_queries": captured_query
         })    
     except Exception as e:
-        captured_queries = callback_handler.queries
+        captured_queries = callback_handler.captured_query
         cleaned_query = captured_queries.replace('\n', ' ').strip()
         response={
             "output": "",  # Agent's response
