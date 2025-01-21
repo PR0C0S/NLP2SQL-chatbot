@@ -149,6 +149,7 @@ def run_tests(json_file, session, engine):
 
 def chatbot_test(query_text):
     """Handles chatbot queries and returns the generated SQL query."""
+    print("ENTERED CHATBOT TEST////////////")
     try:
         # Step 1: Initialize database and LLM
         db = SQLDatabase.from_uri(
