@@ -1,5 +1,6 @@
 import json
 from langchain_openai import ChatOpenAI
+from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import os
@@ -187,7 +188,12 @@ def chatbot_test(query_text):
             "captured_query": cleaned_query,
             "output": response.get("output", "")
         })
-        
+    except OperationalError as e:
+        # Handle database connection errors
+        print(f"❌ Database connection failed: {e}")
+        return json.dumps({
+            "error": f"Database connection error: {str(e)}"
+        })    
     except EarlyStoppingException:
         # Handle early stopping and return the captured query
         captured_query = callback_handler.captured_query or "No query captured"
