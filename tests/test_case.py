@@ -197,6 +197,7 @@ def chatbot_test(query_text):
         })
         
     except Exception as e:
+        print(f"Error:{e}")
         return json.dumps({
             "error": f"An error occurred: {str(e)}"
         })
