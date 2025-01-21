@@ -105,19 +105,19 @@ def run_tests(json_file, session, engine):
             # Execute the expected SQL query and fetch the result
             with engine.connect() as conn:
                 result = conn.execute(text(expected_answer)).fetchall()
-            print(f"Result from DB: {result}")
+                print(f"Result from DB: {result}")
 
                 # Store the result in Chroma (you can customize this storage if necessary)
-            store_in_chroma(test['question'], result)
+                store_in_chroma(test['question'], result)
 
                 # Generate SQL using the chatbot_test function and capture the raw result (including query)
-            generated_response = chatbot_test(f"Question: {question}")
+                generated_response = chatbot_test(f"Question: {question}")
 
                 # Extract the SQL query from the generated response
-            generated_sql = json.loads(generated_response).get("captured_query")
-            print(f"Generated SQL by chatbot_test: {generated_sql}")
+                generated_sql = json.loads(generated_response).get("captured_query")
+                print(f"Generated SQL by chatbot_test: {generated_sql}")
 
-            if generated_sql:
+                if generated_sql:
                     # Execute the generated SQL query and get the result
                     generated_result = conn.execute(text(generated_sql)).fetchall()
                     print(f"Generated Result: {generated_result}")
@@ -128,7 +128,7 @@ def run_tests(json_file, session, engine):
 
                     # Store the similarity score for calculating the grand global score
                     similarity_scores.append(similarity)
-            else:
+                else:
                     print("❌ No valid SQL query generated.")
 
         except Exception as e:
