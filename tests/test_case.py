@@ -202,10 +202,10 @@ def chatbot_test(query_text):
             "captured_query": captured_query,
             "output": ""
         })
-    except openai.APIConnectionError:
+    except openai.APIConnectionError :
         print("❌ OPENAI connection error")
         return json.dumps({
-            "error": f"An error occurred: {str(e)}"
+            "error": "An error occurred"
         })   
     except Exception as e:
         print(f"Error:{e}")
