@@ -241,7 +241,4 @@ The test dataset is stored in a JSON file (`test.json`) with the following struc
 
 ## Demo
 You can try a live demo of the project at: [E-commerce Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
----
-
-This README serves as a complete guide for understanding and reproducing the chatbot's SQL query testing methodology.
 
