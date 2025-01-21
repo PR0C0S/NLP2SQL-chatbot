@@ -1,5 +1,5 @@
 import json
-from langchain_openai import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 import openai
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine, text
