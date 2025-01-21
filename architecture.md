@@ -1,5 +1,11 @@
 # Project Architecture for SQL-Powered Chatbot
 
+## Demo
+You can try a live demo of the project at: [E-commerce Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
+
+## Overview
+This project is a SQL-powered chatbot designed to process user queries and fetch relevant information from a connected SQL database. It utilizes Gradio for the user interface and OpenAI's GPT-based models for natural language understanding.
+
 ## `app.py`
 The `app.py` file serves as the entry point for the project. It creates and launches a Gradio interface that users can interact with to ask questions. The file contains the following key elements:
 
@@ -7,7 +13,6 @@ The `app.py` file serves as the entry point for the project. It creates and laun
    - A Gradio `Interface` is defined to connect the user input (a query) with the chatbot function.
    - `inputs`: A Gradio `Textbox` where users type their questions.
    - `outputs`: A Gradio `Textbox` where the chatbot's responses are displayed.
-   - `title` and `description`: Provide context and guidance for users about the chatbot.
 
 2. **Launching the Interface**:
    - The `iface.launch()` method starts the Gradio application locally, allowing users to interact with the chatbot via a web-based UI.
@@ -16,7 +21,7 @@ The `app.py` file serves as the entry point for the project. It creates and laun
 The `chatbot.py` file implements the core logic for processing user queries and interacting with the database. The key components are:
 
 1. **Database Retrieval**:
-   - The `get_database()` function (from `database.py`) retrieves the SQL database connection. It ensures the database is of type `SQLDatabase`.
+   - The `get_database()` function (from `database.py`) retrieves the SQL database connection.
 
 2. **Language Model**:
    - `ChatOpenAI` is initialized with the `gpt-4o-mini` model, using the `OPENAI_API_KEY` for authentication.
