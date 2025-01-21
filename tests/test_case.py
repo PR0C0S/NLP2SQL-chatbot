@@ -1,5 +1,6 @@
 import json
 from langchain_openai import ChatOpenAI
+import openai
 from sqlalchemy.exc import OperationalError
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -201,7 +202,11 @@ def chatbot_test(query_text):
             "captured_query": captured_query,
             "output": ""
         })
-        
+    except openai.APIConnectionError:
+        print("❌ OPENAI connection error")
+        return json.dumps({
+            "error": f"An error occurred: {str(e)}"
+        })   
     except Exception as e:
         print(f"Error:{e}")
         return json.dumps({
