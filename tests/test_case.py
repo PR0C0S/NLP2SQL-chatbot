@@ -1,4 +1,5 @@
 import json
+from langchain_openai import ChatOpenAI
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 import os
@@ -6,12 +7,14 @@ from sentence_transformers import SentenceTransformer
 from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 import chromadb
 import time
-from chatbot_test import chatbot_test
 from sklearn.metrics.pairwise import cosine_similarity
 import json
 import time
+from langchain_community.utilities import SQLDatabase
+from langchain_community.agent_toolkits import create_sql_agent
+from langchain.callbacks.base import BaseCallbackHandler
 
-
+api_key=os.environ.get('OPENAI_API_KEY')
 # Configuration
 host = os.environ.get('HOST')
 user = os.environ.get('USER')
@@ -64,6 +67,23 @@ def calculate_similarity(expected_result, generated_result):
     # Calculate cosine similarity
     similarity = cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
     return similarity
+
+class QueryCaptureCallback(BaseCallbackHandler):
+    def __init__(self):
+        self.captured_query = ""  # Properly define the attribute
+        self.stop_execution = False
+
+    def on_agent_action(self, action, *, run_id, parent_run_id=None, **kwargs):
+        if action.tool == "sql_db_query_checker":
+            self.captured_query = action.tool_input.get("query", "")  # Capture the query
+            self.stop_execution = True
+            raise EarlyStoppingException
+
+
+class EarlyStoppingException(Exception):
+    """Custom exception to stop the chain early."""
+    pass
+
 
 def run_tests(json_file, session, engine):
     similarity_scores = []  # List to store similarity scores for each test
@@ -126,6 +146,60 @@ def run_tests(json_file, session, engine):
     end_time = time.time()
     total_time_taken = end_time - start_time
     print(f"\nTotal Time Taken for run_tests: {total_time_taken:.2f} seconds")
+
+def chatbot_test(query_text):
+    """Handles chatbot queries and returns the generated SQL query."""
+    try:
+        # Step 1: Initialize database and LLM
+        db = SQLDatabase.from_uri(
+        DATABASE_URI,
+        ignore_tables=['ecommerce_smaller']
+    )
+        if not isinstance(db, SQLDatabase):
+            raise ValueError("Database connection must be of type SQLDatabase.")
+        
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key=api_key, temperature=0)
+        
+        # Initialize the callback handler to capture the query
+        callback_handler = QueryCaptureCallback()
+
+        # Step 2: Create the SQL agent with the callback
+        sql_chain = create_sql_agent(
+            llm,
+            db=db,
+            agent_type="openai-tools",
+            verbose=False,
+            top_k=5,
+            agent_executor_kwargs={"callbacks": [callback_handler]},
+        )
+
+        # Step 3: Invoke the chain
+        response = sql_chain.invoke({"input": query_text})
+
+        # Step 4: Get the captured query
+        captured_query = callback_handler.captured_query or "No query captured"
+        
+        # Clean up the query
+        cleaned_query = captured_query.replace('\n', ' ').strip()
+
+        return json.dumps({
+            "captured_query": cleaned_query,
+            "output": response.get("output", "")
+        })
+        
+    except EarlyStoppingException:
+        # Handle early stopping and return the captured query
+        captured_query = callback_handler.captured_query or "No query captured"
+        return json.dumps({
+            "captured_query": captured_query,
+            "output": ""
+        })
+        
+    except Exception as e:
+        return json.dumps({
+            "error": f"An error occurred: {str(e)}"
+        })
+
 
 def main():
     # Connect to the database
