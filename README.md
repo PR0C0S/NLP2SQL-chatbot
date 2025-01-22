@@ -3,7 +3,7 @@
 This project is a NLP to SQL Chatbot designed to process user queries and fetch relevant information from a connected SQL database. The chatbot leverages OpenAI's GPT-based models for natural language understanding and Gradio for an intuitive user interface.
 
 ## Demo
-Try the live demo: [E-commerce Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
+Try the live demo: [NLP2SQL Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
 
 ## Features
 - **Natural Language Querying**: Users can ask questions in plain English.

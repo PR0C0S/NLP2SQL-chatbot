@@ -1,7 +1,7 @@
 # Project Architecture for NLP2SQL Chatbot
 
 ## Demo
-You can try a live demo of the project at: [E-commerce Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
+You can try a live demo of the project at: [NLP2SQL Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
 
 ## Overview
 This project is a NLP to SQL Chatbot designed to process user queries and fetch relevant information from a connected SQL database. It utilizes Gradio for the user interface and OpenAI's GPT-based models for natural language understanding.
