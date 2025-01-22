@@ -12,10 +12,10 @@ Try the live demo: [E-commerce Chatbot Demo](https://huggingface.co/spaces/proco
 - **Customizable Models**: Powered by OpenAI's `gpt-4o-mini` with adjustable parameters.
 
 ## Architecture
-For a detailed overview of the project architecture, check the [Architecture Documentation](architecture.md).
+For a detailed overview of the project architecture, check the [Architecture Documentation](docs/architecture.md).
 
 ## Test Methodology
-For a detailed test methodologies of the project, check the [Test Documentation](test_method.md).
+For a detailed test methodologies of the project, check the [Test Documentation](docs/test_method.md).
 
 ## Installation
 

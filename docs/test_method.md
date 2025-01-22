@@ -239,3 +239,15 @@ The test dataset is stored in a JSON file (`test.json`) with the following struc
 
 ---
 
+### Test Accuracy
+
+| Metric               | Description                                      | Accuracy (%) | Notes                                |
+|----------------------|--------------------------------------------------|--------------|--------------------------------------|
+| **Vector Similarity** | Measures the cosine similarity between embeddings generated for query results. | 86%       | Indicates the closeness of responses based on vector representations. |
+| **Text Similarity**   | Evaluates the textual overlap and semantic closeness between the expected and actual query using `SequenceMatcher`. | 75%       | Uses the `SequenceMatcher` library to calculate similarity ratios. |
+
+### Notes:
+- **Vector Similarity**: High accuracy here implies the model effectively understands and matches the contextual meaning of user queries.
+- **Text Similarity**: Calculated using Python's `difflib.SequenceMatcher` library, which computes a similarity ratio by comparing the sequence alignment of the expected and actual text.
+- Results were generated using a test set containing 50 diverse queries.
+
