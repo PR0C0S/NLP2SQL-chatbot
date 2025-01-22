@@ -241,7 +241,7 @@ The test dataset is stored in a JSON file (`test.json`) with the following struc
 
 ### Test Accuracy
 
-| Metric               | Description                                      | Accuracy (%) | Notes                                |
+| Metric               | Description                                      | Average Similarity (%) | Notes                                |
 |----------------------|--------------------------------------------------|--------------|--------------------------------------|
 | **Vector Similarity** | Measures the cosine similarity between embeddings generated for query results. | 86%       | Indicates the closeness of responses based on vector representations. |
 | **Text Similarity**   | Evaluates the textual overlap and semantic closeness between the expected and actual query using `SequenceMatcher`. | 75%       | Uses the `SequenceMatcher` library to calculate similarity ratios. |
