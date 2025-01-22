@@ -1,6 +1,6 @@
-# SQL-Powered E-commerce Chatbot
+# NLP to SQL Chatbot
 
-This project is a SQL-powered chatbot designed to process user queries and fetch relevant information from a connected SQL database. The chatbot leverages OpenAI's GPT-based models for natural language understanding and Gradio for an intuitive user interface.
+This project is a NLP to SQL Chatbot designed to process user queries and fetch relevant information from a connected SQL database. The chatbot leverages OpenAI's GPT-based models for natural language understanding and Gradio for an intuitive user interface.
 
 ## Demo
 Try the live demo: [E-commerce Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
@@ -27,7 +27,7 @@ For a detailed test methodologies of the project, check the [Test Documentation]
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/PR0C0S/ecommerce-chatbot.git
+   git clone https://github.com/PR0C0S/NLP2SQL-chatbot.git
    cd ecommerce-chatbot
 
 2. Install necessary requirements:

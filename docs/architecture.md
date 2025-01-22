@@ -1,10 +1,10 @@
-# Project Architecture for SQL-Powered Chatbot
+# Project Architecture for NLP2SQL Chatbot
 
 ## Demo
 You can try a live demo of the project at: [E-commerce Chatbot Demo](https://huggingface.co/spaces/procos/ecommerce-v2)
 
 ## Overview
-This project is a SQL-powered chatbot designed to process user queries and fetch relevant information from a connected SQL database. It utilizes Gradio for the user interface and OpenAI's GPT-based models for natural language understanding.
+This project is a NLP to SQL Chatbot designed to process user queries and fetch relevant information from a connected SQL database. It utilizes Gradio for the user interface and OpenAI's GPT-based models for natural language understanding.
 
 ## `app.py`
 The `app.py` file serves as the entry point for the project. It creates and launches a Gradio interface that users can interact with to ask questions. The file contains the following key elements:
